@@ -140,8 +140,8 @@ class AutocompleteFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             # return queryset.filter(**{self.parameter_name: self.value()})
-        for value in self.value():
-            queryset &= queryset.filter(**{self.parameter_name: value})
+			for value in self.value():
+				queryset &= queryset.filter(**{self.parameter_name: value})
         return queryset
     
     def get_autocomplete_url(self, request, model_admin):
