@@ -22,7 +22,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
     title = ''
     field_name = ''
     field_pk = 'pk'
-    use_pk_exact = True
+    use_pk_exact = False
     is_placeholder_title = False
     widget_attrs = {}
     rel_model = None
