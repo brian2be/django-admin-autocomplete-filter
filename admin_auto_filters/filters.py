@@ -1,4 +1,4 @@
-from django.contrib.admin.widgets import AutocompleteSelect as Base
+from django.contrib.admin.widgets import AutocompleteSelect as Base, AutocompleteSelectMultiple
 from django import forms
 from django.contrib import admin
 from django.db.models.fields.related import ForeignObjectRel
@@ -27,7 +27,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
     widget_attrs = {}
     rel_model = None
     parameter_name = None
-    form_field = forms.ModelChoiceField
+    form_field = forms.ModelMultipleChoiceField
 
     class Media:
         js = (
@@ -55,7 +55,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
         else:
             remote_field = model._meta.get_field(self.field_name).remote_field
 
-        widget = AutocompleteSelect(remote_field,
+        widget = AutocompleteSelectMultiple(remote_field,
                                     model_admin.admin_site,
                                     custom_url=self.get_autocomplete_url(request, model_admin),)
         form_field = self.get_form_field()
