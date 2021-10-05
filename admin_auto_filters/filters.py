@@ -42,7 +42,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
 
     def __init__(self, request, params, model, model_admin):
         if self.parameter_name is None:
-            self.parameter_name = self.field_name
+            self.parameter_name = '{}__{}__in'.format(self.field_name, self.field_pk)
             if self.use_pk_exact:
                 self.parameter_name += '__{}__exact'.format(self.field_pk)
         super().__init__(request, params, model, model_admin)
@@ -111,7 +111,17 @@ class AutocompleteFilter(admin.SimpleListFilter):
         def _get_media(obj):
             return Media(media=getattr(obj, 'Media', None))
 
-        media = _get_media(model_admin) + widget.media + _get_media(AutocompleteFilter) + _get_media(self)
+        class FilterMedia:
+            js = (
+                'admin/js/jquery.init.js',
+                'django-admin-autocomplete-filter/js/autocomplete_filter_qs.js',
+            )
+            css = {
+                'screen': (
+                    'django-admin-autocomplete-filter/css/autocomplete-fix.css',
+                ),
+            }
+        media = _get_media(model_admin) + widget.media + Media(FilterMedia)
 
         for name in MEDIA_TYPES:
             setattr(model_admin.Media, name, getattr(media, "_" + name))
@@ -122,11 +132,17 @@ class AutocompleteFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return ()
 
+    def value(self):
+        if self.used_parameters.get(self.parameter_name):
+            return self.used_parameters.get(self.parameter_name).split(',')
+        else:
+            return []
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(**{self.parameter_name: self.value()})
-        else:
-            return queryset
+            # return queryset.filter(**{self.parameter_name: self.value()})
+			for value in self.value():
+				queryset &= queryset.filter(**{self.parameter_name: value})
+        return queryset
     
     def get_autocomplete_url(self, request, model_admin):
         '''
