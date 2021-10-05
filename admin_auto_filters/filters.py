@@ -43,7 +43,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
     def __init__(self, request, params, model, model_admin):
         if self.parameter_name is None:
             self.parameter_name = '{}__{}__in'.format(self.field_name, self.field_pk)
-            if self.use_pk_exact:
+            if self.use_pk_exact and len(self.value()) == 1:
                 self.parameter_name += '__{}__exact'.format(self.field_pk)
         super().__init__(request, params, model, model_admin)
 
