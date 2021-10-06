@@ -41,12 +41,10 @@ class AutocompleteFilter(admin.SimpleListFilter):
         }
 
     def __init__(self, request, params, model, model_admin):
-        print(f"init:: parameter_name={self.parameter_name}")
         if self.parameter_name is None:
             self.parameter_name = '{}__{}__in'.format(self.field_name, self.field_pk)
             if self.use_pk_exact and len(self.value()) == 1:
                 self.parameter_name += '__{}__exact'.format(self.field_pk)
-        print(f"init(after):: parameter_name={self.parameter_name}")
         super().__init__(request, params, model, model_admin)
 
         if self.rel_model:
@@ -73,8 +71,6 @@ class AutocompleteFilter(admin.SimpleListFilter):
         if self.is_placeholder_title:
             # Upper case letter P as dirty hack for bypass django2 widget force placeholder value as empty string ("")
             attrs['data-Placeholder'] = self.title
-        print(f"init:: attrs={attrs}")
-        print(f"init:: self.used_parameters={self.used_parameters}")
         self.rendered_widget = field.widget.render(
             name=self.parameter_name,
             value=self.value(),
@@ -136,22 +132,15 @@ class AutocompleteFilter(admin.SimpleListFilter):
         return ()
 
     def value(self):
-        print(f"value:: self.used_parameters={self.used_parameters}")
         if self.used_parameters.get(self.parameter_name):
             return self.used_parameters.get(self.parameter_name).split(',')
         return []
 
     def queryset(self, request, queryset):
         values = self.value()
-        print(f"queryset:: values={values}")
         if values:
-            print(f"queryset(if):: values={values}")
             for value in values:
-                print(f"queryset(if>for):: value={value}")
                 queryset &= queryset.filter(**{self.parameter_name.replace("__in", ""): value})
-            # return queryset.filter(**{self.parameter_name: self.value()})
-
-        print(f"queryset:: queryset={queryset}")
         return queryset
     
     def get_autocomplete_url(self, request, model_admin):
