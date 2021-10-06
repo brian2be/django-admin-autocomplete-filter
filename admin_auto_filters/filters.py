@@ -58,8 +58,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
             remote_field = model._meta.get_field(self.field_name).remote_field
 
         widget = AutocompleteSelectMultiple(remote_field,
-                                    model_admin.admin_site,
-                                    custom_url=self.get_autocomplete_url(request, model_admin),)
+                                    model_admin.admin_site)
         form_field = self.get_form_field()
         field = form_field(
             queryset=self.get_queryset_for_field(model, self.field_name),
