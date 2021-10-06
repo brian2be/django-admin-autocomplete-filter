@@ -77,7 +77,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
         print(f"init:: self.used_parameters={self.used_parameters}")
         self.rendered_widget = field.widget.render(
             name=self.parameter_name,
-            value=self.used_parameters.get(self.parameter_name, ''),
+            value=self.value(),
             attrs=attrs
         )
 
