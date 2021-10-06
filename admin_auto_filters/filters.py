@@ -148,7 +148,7 @@ class AutocompleteFilter(admin.SimpleListFilter):
             print(f"queryset(if):: values={values}")
             for value in values:
                 print(f"queryset(if>for):: value={value}")
-                queryset &= queryset.filter(**{self.parameter_name: value})
+                queryset &= queryset.filter(**{self.parameter_name.replace("__in", ""): value})
             # return queryset.filter(**{self.parameter_name: self.value()})
 
         print(f"queryset:: queryset={queryset}")
